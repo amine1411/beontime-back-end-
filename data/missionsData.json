@@ -1,0 +1,80 @@
+[
+  {
+    "idMission": "CTL01-COMPTA-01",
+    "idClient": "CTL01",
+    "idCollab": "C02",
+    "entreprise": "Beaubois SAS",
+    "libelle": "Comptabilité Mensuelle",
+    "type": "COMPTA",
+    "echeance": "03/10/2022",
+    "accompli": "",
+    "tempsPrevu": 2,
+    "tempsRealise": 0,
+    "progression": 0
+  },
+  {
+    "idMission": "CTL01-COMPTA-02",
+    "idClient": "CTL01",
+    "idCollab": "C02",
+    "entreprise": "Beaubois SAS",
+    "libelle": "Comptabilité Mensuelle",
+    "type": "COMPTA",
+    "echeance": "03/11/2022",
+    "accompli": "",
+    "tempsPrevu": 2,
+    "tempsRealise": 0,
+    "progression": 0
+  },
+  {
+    "idMission": "CTL01-COMPTA-03",
+    "idClient": "CTL01",
+    "idCollab": "C02",
+    "entreprise": "Beaubois SAS",
+    "libelle": "Comptabilité Mensuelle",
+    "type": "COMPTA",
+    "echeance": "03/11/2022",
+    "accompli": "",
+    "tempsPrevu": 2,
+    "tempsRealise": 0,
+    "progression": 0
+  },
+  {
+    "idMission": "CTL01-TVA-01",
+    "idClient": "CTL01",
+    "idCollab": "C02",
+    "entreprise": "Beaubois SAS",
+    "libelle": "TVA Mensuelle",
+    "type": "TVA",
+    "echeance": "03/10/2022",
+    "accompli": "",
+    "tempsPrevu": 1,
+    "tempsRealise": 0,
+    "progression": 0
+  },
+  {
+    "idMission": "CTL01-TVA-02",
+    "idClient": "CTL01",
+    "idCollab": "C02",
+    "entreprise": "Beaubois SAS",
+    "libelle": "TVA Mensuelle",
+    "type": "TVA",
+    "echeance": "03/11/2022",
+    "accompli": "",
+    "tempsPrevu": 1,
+    "tempsRealise": 0,
+    "progression": 0
+  },
+  {
+    "idMission": "CTL01-TVA-03",
+    "idClient": "CTL01",
+    "idCollab": "C02",
+    "entreprise": "Beaubois SAS",
+    "libelle": "TVA Mensuelle",
+    "type": "TVA",
+    "echeance": "03/11/2022",
+    "accompli": "",
+    "tempsPrevu": 1,
+    "tempsRealise": 0,
+    "progression": 0
+  }
+]
