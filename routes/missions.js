@@ -133,7 +133,7 @@ router.post("/", (req, res, next) => {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
-
+    console.log("Demande Creation d'une Mission =>", req.body);
     // Creation de la Mission
     Mission.findOne({ idMission: req.body.idMission }).then((data) => {
       if (data === null) {
@@ -146,7 +146,7 @@ router.post("/", (req, res, next) => {
           libelle: req.body.libelle,
           type: req.body.type,
           echeance: req.body.echeance,
-          tempPrevu: req.body.tempsPrevu,
+          tempsPrevu: parseInt(req.body.tempsPrevu),
           tempsRealise: 0,
           Progression: 0,
         });
