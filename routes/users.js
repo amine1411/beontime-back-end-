@@ -86,4 +86,25 @@ router.post("/signin", (req, res, next) => {
   //////////////
 });
 
+// getAllUsers
+router.get("/all", (req, res, next) => {
+  //////////////
+  try {
+    // Lecture des users
+    User.find()
+      .select({ _id: 0, __v: 0, token: 0, password: 0 })
+      .then((data) => {
+        if (data.length !== 0) {
+          res.status(200).json({ result: true, users: data });
+        } else {
+          // il n'y a pas de clients
+          res.status(200).json({ result: false, error: "No Users in DB" });
+        }
+      });
+  } catch (err) {
+    return next(err);
+  }
+  //////////////
+});
+
 module.exports = router;
