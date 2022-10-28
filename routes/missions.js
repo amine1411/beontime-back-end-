@@ -26,7 +26,7 @@ router.get("/all", (req, res, next) => {
 });
 
 // getMission params [idMission]
-router.get("/", (req, res, next) => {
+router.post("/", (req, res, next) => {
   //////////////
   try {
     // Verification des parametres
@@ -55,7 +55,7 @@ router.get("/", (req, res, next) => {
 }); /// fin getMission
 
 // getMissions by idCollab params [idCollab]
-router.get("/collab", (req, res, next) => {
+router.post("/collab", (req, res, next) => {
   //////////////
   try {
     // Verification des parametres
@@ -84,14 +84,17 @@ router.get("/collab", (req, res, next) => {
 }); /// fin getMission by idCollab
 
 // getMission by idClient params [idClient]
-router.get("/client", (req, res, next) => {
+router.post("/client", (req, res, next) => {
   //////////////
+  console.log(req.body);
   try {
     // Verification des parametres
     if (!checkBody(req.body, ["idClient"])) {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
+
+    console.log("missions/client pour le idClient =>", req.body.idClient);
 
     // On cherche les missions du idClient
     Mission.find({ idClient: req.body.idClient })
@@ -114,7 +117,7 @@ router.get("/client", (req, res, next) => {
 
 // addMission
 // params [idMission, idClient, idCollab, entreprise, libelle, type, echeance, tempsPrevu]
-router.post("/", (req, res, next) => {
+router.post("/create", (req, res, next) => {
   //////////////
   try {
     // Verification des parametres
@@ -148,7 +151,7 @@ router.post("/", (req, res, next) => {
           echeance: req.body.echeance,
           tempsPrevu: parseInt(req.body.tempsPrevu),
           tempsRealise: 0,
-          Progression: 0,
+          progression: 0,
         });
 
         newMission.save().then((newMission) => {
@@ -167,19 +170,75 @@ router.post("/", (req, res, next) => {
   }
 }); //////fin AddMission
 
-// updateMissionProgression params [idMission, tempsRealise, progression]
-router.put("/progression", (req, res, next) => {
+// updateMission params [tous]
+router.put("/:idMission", (req, res, next) => {
   //////////////
   try {
     // Verification des parametres
+    if (!req.params.idMission) {
+      res.status(200).json({ result: false, error: "Missing fields" });
+      return;
+    }
+
     if (
       !checkBody(req.body, [
-        "idMission",
-        "tempsRealise",
-        "progression",
-        "accompli",
+        "idClient",
+        "idCollab",
+        "entreprise",
+        "libelle",
+        "type",
+        "echeance",
+        "tempsPrevu",
       ])
     ) {
+      res.status(200).json({ result: false, error: "Missing fields" });
+      return;
+    }
+
+    // MAJ de la Mission
+    Mission.findOne({ idMission: req.params.idMission }).then((data) => {
+      if (data !== null) {
+        // si Mission existe alors on va la mettre a jour
+        Mission.updateOne(
+          { idMission: req.params.idMission },
+          {
+            idClient: req.body.idClient,
+            idCollab: req.body.idCollab,
+            entreprise: req.body.entreprise,
+            libelle: req.body.libelle,
+            type: req.body.type,
+            echeance: req.body.echeance,
+            tempsPrevu: parseInt(req.body.tempsPrevu),
+          }
+        )
+          .then((data) => {
+            res.status(200).json({ result: true, return: "Mission modified" });
+          })
+          .catch((error) => {
+            console.log(`Update de ${req.params.idMission} en erreur:${err}`);
+            res.status(200).json({ result: false, return: error });
+          });
+      } else {
+        // Mission n'existe pas
+        res.status(200).json({ result: false, error: "Mission not found" });
+      }
+    });
+    //////////////
+  } catch (err) {
+    return next(err);
+  }
+}); //fin UpdateMissionProgression
+
+// updateMissionProgression params [idMission, tempsRealise, progression]
+router.put("/progression/idMission", (req, res, next) => {
+  //////////////
+  try {
+    // Verification des parametres
+    if (!req.params.idMission) {
+      res.status(200).json({ result: false, error: "Missing fields" });
+      return;
+    }
+    if (!checkBody(req.body, ["tempsRealise", "progression", "accompli"])) {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
@@ -189,10 +248,10 @@ router.put("/progression", (req, res, next) => {
       if (data !== null) {
         // si Mission existe alors on va la mettre a jour
         Mission.updateOne(
-          { idMission: req.body.idMission },
+          { idMission: req.params.idMission },
           {
-            tempsRealise: req.body.tempsRealise,
-            progression: req.body.progression,
+            tempsRealise: parseInt(req.body.tempsRealise),
+            progression: parseInt(req.body.progression),
             accompli: req.body.accompli,
           }
         )
@@ -215,25 +274,25 @@ router.put("/progression", (req, res, next) => {
 }); //fin UpdateMissionProgression
 
 // deleteMission params [idMission]
-router.delete("/", (req, res, next) => {
+router.delete("/:idMission", (req, res, next) => {
   //////////////
   try {
     // Verification des parametres
-    if (!checkBody(req.body, ["idMission"])) {
+    if (!req.params.idMission) {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
 
     // Delete de la Mission
-    Mission.findOne({ idMission: req.body.idMission }).then((data) => {
+    Mission.findOne({ idMission: req.params.idMission }).then((data) => {
       if (data !== null) {
         // si Mission existe pas alors on va la supprimer
-        Mission.deleteOne({ idMission: req.body.idMission })
+        Mission.deleteOne({ idMission: req.params.idMission })
           .then((data) => {
             res.status(200).json({ result: true, return: "mission deleted" });
           })
           .catch((error) => {
-            console.log(`Delete de ${req.body.idMission} en erreur:${err}`);
+            console.log(`Delete de ${req.params.idMission} en erreur:${err}`);
             res.status(200).json({ result: false, return: error });
           });
       } else {
@@ -243,7 +302,7 @@ router.delete("/", (req, res, next) => {
     });
     //////////////
   } catch (err) {
-    console.log(`Delete de ${req.body.idClient} en erreur:${err}`);
+    console.log(`Delete de ${req.params.idMission} en erreur:${err}`);
     return next(err);
   }
 }); ///fin DeleteMission
