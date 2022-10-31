@@ -3,19 +3,21 @@ var router = express.Router();
 const Mission = require("../models/missions");
 const { checkBody } = require("../modules/checkBody");
 
-// getAllMissions
+// getAllMissions - TEST OK
+// retourne les toutes les missions
 router.get("/all", (req, res, next) => {
   //
   try {
-    // Lecture des missions
+    // Lecture des toutes missions
     Mission.find()
       .select({ _id: 0, __v: 0 })
       .then((data) => {
         if (data.length !== 0) {
+          // il a des missions renvoyer les data
           res.status(200).json({ result: true, missions: data });
         } else {
-          // il n'y a pas de missions
-          res.status(200).json({ result: false, error: "No Mission" });
+          // il n'y a pas de missions revoyer aucune mission
+          res.status(200).json({ result: false, error: "aucune mission" });
         }
       });
     //
@@ -25,47 +27,52 @@ router.get("/all", (req, res, next) => {
   //
 });
 
-// getMission params [idMission]
-router.post("/", (req, res, next) => {
+// getMission_by_idMission] - TEST OK
+// retourne une mission
+router.get("/mission/:idMission", (req, res, next) => {
   //////////////
   try {
     // Verification des parametres
-    if (!checkBody(req.body, ["idMission"])) {
+    if (!req.params.idMission) {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
 
-    // On cherche la mission
-    Mission.findOne({ idMission: req.body.idMission })
+    // On cherche la mission dans la base
+    Mission.findOne({ idMission: req.params.idMission })
       .select({ _id: 0, __v: 0 })
       .then((data) => {
         if (data !== null) {
+          // Mission existe on retourne les data
           res.status(200).json({ result: true, missions: data });
         } else {
-          // Mission n'existe pas
+          // Mission n'existe pas on retourne une erreur
           res
             .status(200)
-            .json({ result: false, error: "Mission does not exist" });
+            .json({ result: false, error: "La mission n'existe pas" });
         }
       });
     //////////////
   } catch (err) {
     return next(err);
   }
-}); /// fin getMission
+}); /// fin _by_idMission]
 
-// getMissions by idCollab params [idCollab]
-router.post("/collab", (req, res, next) => {
+// getMissions_by_idCollab params [idCollab] - TEST OK
+// retourne toutes les missions d'un collaborateur
+router.get("/collab/:idCollab", (req, res, next) => {
   //////////////
   try {
     // Verification des parametres
-    if (!checkBody(req.body, ["idCollab"])) {
+    if (!req.params.idCollab) {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
 
+    console.log("missions/collab pour le idCollab =>", req.params.idCollab);
+
     // On cherche la mission
-    Mission.find({ idCollab: req.body.idCollab })
+    Mission.find({ idCollab: req.params.idCollab })
       .select({ _id: 0, __v: 0 })
       .then((data) => {
         if (data.length !== 0) {
@@ -83,21 +90,22 @@ router.post("/collab", (req, res, next) => {
   }
 }); /// fin getMission by idCollab
 
-// getMission by idClient params [idClient]
-router.post("/client", (req, res, next) => {
+// getMission_by_idClient params [idClient] - TEST OK
+// retourne toutes les missions d'un client
+router.get("/client/:idClient", (req, res, next) => {
   //////////////
   console.log(req.body);
   try {
     // Verification des parametres
-    if (!checkBody(req.body, ["idClient"])) {
+    if (!req.params.idClient) {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
 
-    console.log("missions/client pour le idClient =>", req.body.idClient);
+    console.log("missions/client pour le idClient =>", req.params.idClient);
 
     // On cherche les missions du idClient
-    Mission.find({ idClient: req.body.idClient })
+    Mission.find({ idClient: req.params.idClient })
       .select({ _id: 0, __v: 0 })
       .then((data) => {
         if (data.length !== 0) {
@@ -116,28 +124,19 @@ router.post("/client", (req, res, next) => {
 }); /// fin getMission by idClient
 
 // addMission
-// params [idMission, idClient, idCollab, entreprise, libelle, type, echeance, tempsPrevu]
-router.post("/create", (req, res, next) => {
+// ajouter une mission
+// params KEYS [idMission, idClient, idCollab]
+router.post("/", (req, res, next) => {
   //////////////
   try {
-    // Verification des parametres
-    if (
-      !checkBody(req.body, [
-        "idMission",
-        "idClient",
-        "idCollab",
-        "entreprise",
-        "libelle",
-        "type",
-        "echeance",
-        "tempsPrevu",
-      ])
-    ) {
+    // Verification des parametres (only Keys)
+    if (!checkBody(req.body, ["idMission", "idClient", "idCollab"])) {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
     console.log("Demande Creation d'une Mission =>", req.body);
     // Creation de la Mission
+    // on verifie si la mission existe deja
     Mission.findOne({ idMission: req.body.idMission }).then((data) => {
       if (data === null) {
         // si Mission n'existe pas alors on va le créer
@@ -149,19 +148,19 @@ router.post("/create", (req, res, next) => {
           libelle: req.body.libelle,
           type: req.body.type,
           echeance: req.body.echeance,
+          accompli: req.body.accompli,
           tempsPrevu: parseInt(req.body.tempsPrevu),
           tempsRealise: 0,
           progression: 0,
+          isDaily: false,
         });
 
         newMission.save().then((newMission) => {
           res.status(200).json({ result: true, mission: newMission });
         });
       } else {
-        // Mission already exists in database
-        res
-          .status(200)
-          .json({ result: false, error: "Mission already exists" });
+        // La mission existe deja - on retourne la mission existe
+        res.status(200).json({ result: false, error: "Mission existe deja" });
       }
     });
     //////////////
