@@ -148,8 +148,8 @@ router.post("/", (req, res, next) => {
           libelle: req.body.libelle,
           type: req.body.type,
           echeance: req.body.echeance,
-          accompli: req.body.accompli,
-          tempsPrevu: parseInt(req.body.tempsPrevu),
+          accompli: "",
+          tempsPrevu: req.body.tempsPrevu,
           tempsRealise: 0,
           progression: 0,
           isDaily: false,
@@ -169,7 +169,7 @@ router.post("/", (req, res, next) => {
   }
 }); //////fin AddMission
 
-// updateMission params [tous]
+// updateMission [idMission]
 router.put("/:idMission", (req, res, next) => {
   //////////////
   try {
@@ -179,6 +179,7 @@ router.put("/:idMission", (req, res, next) => {
       return;
     }
 
+    /*
     if (
       !checkBody(req.body, [
         "idClient",
@@ -194,6 +195,13 @@ router.put("/:idMission", (req, res, next) => {
       return;
     }
 
+    */
+
+    console.log(
+      "mission demande modification pour idMission =>",
+      req.params.idMission
+    );
+
     // MAJ de la Mission
     Mission.findOne({ idMission: req.params.idMission }).then((data) => {
       if (data !== null) {
@@ -201,13 +209,7 @@ router.put("/:idMission", (req, res, next) => {
         Mission.updateOne(
           { idMission: req.params.idMission },
           {
-            idClient: req.body.idClient,
-            idCollab: req.body.idCollab,
-            entreprise: req.body.entreprise,
-            libelle: req.body.libelle,
-            type: req.body.type,
-            echeance: req.body.echeance,
-            tempsPrevu: parseInt(req.body.tempsPrevu),
+            ...req.body,
           }
         )
           .then((data) => {
@@ -228,51 +230,7 @@ router.put("/:idMission", (req, res, next) => {
   }
 }); //fin UpdateMissionProgression
 
-// updateMissionProgression params [idMission, tempsRealise, progression]
-router.put("/progression/idMission", (req, res, next) => {
-  //////////////
-  try {
-    // Verification des parametres
-    if (!req.params.idMission) {
-      res.status(200).json({ result: false, error: "Missing fields" });
-      return;
-    }
-    if (!checkBody(req.body, ["tempsRealise", "progression", "accompli"])) {
-      res.status(200).json({ result: false, error: "Missing fields" });
-      return;
-    }
-
-    // MAJ de la Mission
-    Mission.findOne({ idMission: req.body.idMission }).then((data) => {
-      if (data !== null) {
-        // si Mission existe alors on va la mettre a jour
-        Mission.updateOne(
-          { idMission: req.params.idMission },
-          {
-            tempsRealise: parseInt(req.body.tempsRealise),
-            progression: parseInt(req.body.progression),
-            accompli: req.body.accompli,
-          }
-        )
-          .then((data) => {
-            res.status(200).json({ result: true, return: "Mission modified" });
-          })
-          .catch((error) => {
-            console.log(`Update de ${req.body.idMission} en erreur:${err}`);
-            res.status(200).json({ result: false, return: error });
-          });
-      } else {
-        // Mission n'existe pas
-        res.status(200).json({ result: false, error: "Mission not found" });
-      }
-    });
-    //////////////
-  } catch (err) {
-    return next(err);
-  }
-}); //fin UpdateMissionProgression
-
-// deleteMission params [idMission]
+// deleteMission [idMission]
 router.delete("/:idMission", (req, res, next) => {
   //////////////
   try {
@@ -281,6 +239,11 @@ router.delete("/:idMission", (req, res, next) => {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
+
+    console.log(
+      "mission demande suppression pour idMission =>",
+      req.params.idMission
+    );
 
     // Delete de la Mission
     Mission.findOne({ idMission: req.params.idMission }).then((data) => {
