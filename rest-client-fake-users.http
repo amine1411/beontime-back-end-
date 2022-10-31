@@ -1,0 +1,60 @@
+### POST signup (create user)
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "username":"C02",
+  "password": "azerty",
+  "nom": "Baylou",
+  "prenom": "Alice",
+  "picture" : "https://minimaltoolkit.com/images/randomdata/female/100.jpg",
+  "isManager": "false",
+  "isCollab" : "true",
+  "isWorking" : "true" 
+}
+
+###
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "username":"C03",
+  "password": "azerty",
+  "nom": "Lebeluz",
+  "prenom": "Florent",
+  "picture" : "https://minimaltoolkit.com/images/randomdata/male/73.jpg",
+  "isManager": "false",
+  "isCollab" : "true",
+  "isWorking" : "true" 
+}
+
+###
+
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "username":"C04",
+  "password": "azerty",
+  "nom": "Moinu",
+  "prenom": "Amine",
+  "picture" : "https://minimaltoolkit.com/images/randomdata/male/77.jpg",
+  "isManager": "false",
+  "isCollab" : "true",
+  "isWorking" : "true" 
+}
+
+### 
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "username":"C01",
+  "password": "azerty",
+  "nom": "Cotusou",
+  "prenom": "Yves",
+  "picture" : "https://minimaltoolkit.com/images/randomdata/male/76.jpg",
+  "isManager": "false",
+  "isCollab" : "true",
+  "isWorking" : "true" 
+}

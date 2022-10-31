@@ -1,0 +1,121 @@
+# TEST DES ROUTES avce Extension VS Code REST CLIENT
+#======================================================
+# Routes pour les missions
+#======================================================
+### GET missions/all
+GET http://localhost:3000/missions/all
+
+### GET missions/mission/idMission
+GET http://localhost:3000/missions/mission/CTL01-TVA-02
+
+### GET missions/collab/idCollab
+GET http://localhost:3000/missions/collab/C02
+
+
+### GET missions/client/idClient
+GET http://localhost:3000/missions/client/CTL01
+
+### POST missions/
+
+POST http://localhost:3000/missions/
+Content-Type: application/json
+
+{
+  "idMission":"CTL99-TEST",
+  "idClient":"CTL99",
+  "idCollab":"C99"
+}
+
+
+### PUT missions/idMission
+PUT http://localhost:3000/missions/CTL99-TEST
+Content-Type: application/json
+
+{
+  "accompli":"2023-12-31",
+  "progression":100,
+  "tempsRealise": 5
+}
+
+### DELETE missions/idMission
+DELETE http://localhost:3000/missions/CTL99-TEST
+
+
+#======================================================
+# Routes pour les clients
+#======================================================
+### GET All Clients
+GET http://localhost:3000/clients/all
+
+
+### GET Client :idClient
+GET http://localhost:3000/clients/CTL01
+
+
+
+### CREATE Client
+POST http://localhost:3000/clients/
+Content-Type: application/json
+
+{
+  "idClient":"CTL99",
+  "entreprise": "TEST99",
+  "isActive": "true"
+}
+
+### MODIFY Client
+
+PUT http://localhost:3000/clients/CTL99
+Content-Type: application/json
+
+{
+   "isActive" : "false" 
+}
+
+###  DELETE Client
+DELETE http://localhost:3000/clients/CTL99
+
+
+#======================================================
+# Routes pour les collaborateurs
+#======================================================
+### GET users/all
+GET http://localhost:3000/users/all
+
+### POST signin (login user)
+POST http://localhost:3000/users/signin
+Content-Type: application/json
+
+{
+  "username":"C99",
+  "password": "azerty"
+}
+
+
+### POST signup (create user)
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "username":"C99",
+  "password": "azerty",
+  "nom": "Bond",
+  "prenom": "Jannet",
+  "picture" : "https://minimaltoolkit.com/images/randomdata/female/102.jpg",
+  "isManager": "false",
+  "isCollab" : "true",
+  "isWorking" : "true" 
+}
+
+
+### PUT Modify User :idCollab
+PUT http://localhost:3000/users/C99
+Content-Type: application/json
+
+{
+  "isManager": "true"
+}
+
+
+### DELETE User :idCollab
+DELETE http://localhost:3000/users/C99

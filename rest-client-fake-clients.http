@@ -1,0 +1,81 @@
+### CREATE Client
+POST http://localhost:3000/clients/
+Content-Type: application/json
+
+{
+  "idClient": "CTL01",
+  "entreprise": "Beaubois SAS",
+  "isActive": "true"
+}
+
+### CREATE Client
+POST http://localhost:3000/clients/
+Content-Type: application/json
+
+{
+  "idClient": "CTL02",
+  "entreprise": "Bellemontagne SAS",
+  "isActive": "true"
+}
+
+### CREATE Client
+POST http://localhost:3000/clients/
+Content-Type: application/json
+
+{
+  "idClient": "CTL03",
+  "entreprise": "Jolimont SAS",
+  "isActive": "true"
+}
+
+### CREATE Client
+POST http://localhost:3000/clients/
+Content-Type: application/json
+
+{
+  "idClient": "CTL04",
+  "entreprise": "Bellevue SAS",
+  "isActive": "true"
+}
+
+### CREATE Client
+POST http://localhost:3000/clients/
+Content-Type: application/json
+
+{
+  "idClient": "CTL05",
+  "entreprise": "Boucher Fin Gourmet SARL",
+  "isActive": "true"
+}
+
+### CREATE Client
+POST http://localhost:3000/clients/
+Content-Type: application/json
+
+{
+  "idClient": "CTL06",
+  "entreprise": "Coiffeur Delarue SARL",
+  "isActive": "true"
+}
+
+### CREATE Client
+POST http://localhost:3000/clients/
+Content-Type: application/json
+
+{
+  "idClient": "CTL07",
+  "entreprise": "Garage Bontravail SARL",
+  "isActive": "true"
+}
+
+### CREATE Client
+POST http://localhost:3000/clients/
+Content-Type: application/json
+
+{
+  "idClient": "CTL08",
+  "entreprise": "Agence du Soleil SARL",
+  "isActive": "true"
+}
+
+
