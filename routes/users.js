@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 // signup - TEST OK
 // Creation d'un Collaborateur
 router.post("/signup", (req, res, next) => {
-  //console.log("signup/collab pour le req.body =>", req.body);
+  console.log("signup/collab pour le req.body =>", req.body);
 
   try {
     // Verification des parametres du body
