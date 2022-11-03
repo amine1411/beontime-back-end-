@@ -78,7 +78,7 @@ router.post("/signin", (req, res, next) => {
       username: req.body.username,
     }).then((user) => {
       if (user && bcrypt.compareSync(req.body.password, user.password)) {
-        res.status(200).json({ result: true, token: user.token });
+        res.status(200).json({ result: true, token: user.token, picture: user.picture, username: user.username, prenom: user.prenom, isManager: user.isManager });
       } else {
         res.status(200).json({
           result: false,
