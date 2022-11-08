@@ -3,8 +3,9 @@ var router = express.Router();
 const Mission = require("../models/missions");
 const { checkBody } = require("../modules/checkBody");
 
-// getAllMissions - TEST OK
+// getAllMissions
 // retourne toutes les missions
+// param - aucun
 router.get("/all", (req, res, next) => {
   //
   try {
@@ -13,10 +14,10 @@ router.get("/all", (req, res, next) => {
       .select({ _id: 0, __v: 0 })
       .then((data) => {
         if (data.length !== 0) {
-          // il a des missions renvoyer les data
+          // il a des missions on retourne les missions
           res.status(200).json({ result: true, missions: data });
         } else {
-          // il n'y a pas de missions revoyer aucune mission
+          // il n'y a pas de mission on retourne aucune mission
           res.status(200).json({ result: false, error: "aucune mission" });
         }
       });
@@ -27,10 +28,11 @@ router.get("/all", (req, res, next) => {
   //
 }); // fin getAllClients
 
-// getMission_by_idMission - TEST OK
+// getMission_by_idMission
 // retourne une mission
+// param [idMission]
 router.get("/mission/:idMission", (req, res, next) => {
-  //////////////
+  ///
   try {
     // Verification des parametres
     if (!req.params.idMission) {
@@ -43,7 +45,7 @@ router.get("/mission/:idMission", (req, res, next) => {
       .select({ _id: 0, __v: 0 })
       .then((data) => {
         if (data !== null) {
-          // Mission existe on retourne les data
+          // Mission existe on retourne la mission
           res.status(200).json({ result: true, missions: data });
         } else {
           // Mission n'existe pas on retourne une erreur
@@ -57,10 +59,11 @@ router.get("/mission/:idMission", (req, res, next) => {
   }
 }); /// fin getMission_by_idMission]
 
-// getMissions_by_idCollab params [idCollab] - TEST OK
+// getMissions_by_idCollab params
 // retourne toutes les missions d'un collaborateur
+// param [idCollab]
 router.get("/collab/:idCollab", (req, res, next) => {
-  //////////////
+  ///
   try {
     // Verification des parametres
     if (!req.params.idCollab) {
@@ -68,32 +71,34 @@ router.get("/collab/:idCollab", (req, res, next) => {
       return;
     }
 
-    console.log("missions/collab pour le idCollab =>", req.params.idCollab);
+    //console.log("missions/collab pour le idCollab =>", req.params.idCollab);
 
-    // On cherche la mission
+    // On cherche les missions du Collaborateur
     Mission.find({ idCollab: req.params.idCollab })
       .select({ _id: 0, __v: 0 })
       .then((data) => {
         if (data.length !== 0) {
+          // Une ou des mission on retourne la liste des missions
           res.status(200).json({ result: true, missions: data });
         } else {
-          // Aucune Mission pour ce idCollab
+          // Aucune Mission pour ce collaborateur
           res
             .status(200)
             .json({ result: false, error: "No Mission for this Collab" });
         }
       });
-    //////////////
+    //
   } catch (err) {
     return next(err);
   }
 }); /// fin getMission by idCollab
 
-// getMission_by_idClient params [idClient] - TEST OK
+// getMission_by_idClient
 // retourne toutes les missions d'un client
+// params [idClient]
 router.get("/client/:idClient", (req, res, next) => {
-  //////////////
-  console.log(req.body);
+  //
+
   try {
     // Verification des parametres
     if (!req.params.idClient) {
@@ -101,22 +106,23 @@ router.get("/client/:idClient", (req, res, next) => {
       return;
     }
 
-    console.log("missions/client pour le idClient =>", req.params.idClient);
+    //console.log("missions/client pour le idClient =>", req.params.idClient);
 
-    // On cherche les missions du idClient
+    // On cherche les missions du Client
     Mission.find({ idClient: req.params.idClient })
       .select({ _id: 0, __v: 0 })
       .then((data) => {
         if (data.length !== 0) {
+          // Une ou des missions on retourne la liste des missions
           res.status(200).json({ result: true, missions: data });
         } else {
-          // Mission n'existe pas
+          // Aucune mission on retourne pas de mission pour ce client
           res
             .status(200)
-            .json({ result: false, error: "No Mission for this Client" });
+            .json({ result: false, error: "Aucune mission pour ce Client" });
         }
       });
-    //////////////
+    //
   } catch (err) {
     return next(err);
   }
@@ -124,16 +130,18 @@ router.get("/client/:idClient", (req, res, next) => {
 
 // addMission
 // ajouter une mission
-// params KEYS [idMission, idClient, idCollab]
+// params [idMission, idClient, idCollab]
 router.post("/", (req, res, next) => {
-  //////////////
+  //
   try {
     // Verification des parametres (only Keys)
     if (!checkBody(req.body, ["idMission", "idClient", "idCollab"])) {
       res.status(200).json({ result: false, error: "Missing fields" });
       return;
     }
-    console.log("Demande Creation d'une Mission =>", req.body);
+
+    //console.log("Demande Creation d'une Mission =>", req.body);
+
     // Creation de la Mission
     // on verifie si la mission existe deja
     Mission.findOne({ idMission: req.body.idMission }).then((data) => {
@@ -154,7 +162,9 @@ router.post("/", (req, res, next) => {
           isDaily: false,
         });
 
+        // on sauvegarde dans la base
         newMission.save().then((newMission) => {
+          // on retourne la mission créée
           res.status(200).json({ result: true, mission: newMission });
         });
       } else {
@@ -162,15 +172,17 @@ router.post("/", (req, res, next) => {
         res.status(200).json({ result: false, error: "Mission existe deja" });
       }
     });
-    //////////////
+    //
   } catch (err) {
     return next(err);
   }
 }); //////fin AddMission
 
-// updateMission [idMission]
+// updateMission
+// Mise à jour d'une Mission
+// param [idMission]
 router.put("/:idMission", (req, res, next) => {
-  //////////////
+  //
   try {
     // Verification des parametres
     if (!req.params.idMission) {
@@ -178,15 +190,12 @@ router.put("/:idMission", (req, res, next) => {
       return;
     }
 
-    console.log(
-      "Mission demande modification pour idMission =>",
-      req.params.idMission
-    );
+    //console.log("Mission demande modification pour idMission =>",req.params.idMission);
 
     // MAJ de la Mission
     Mission.findOne({ idMission: req.params.idMission }).then((data) => {
       if (data !== null) {
-        // si Mission existe alors on va la mettre a jour
+        // Si Mission existe alors on va la mettre a jour
         Mission.updateOne(
           { idMission: req.params.idMission },
           {
@@ -205,15 +214,17 @@ router.put("/:idMission", (req, res, next) => {
         res.status(200).json({ result: false, error: "Mission non trouvé" });
       }
     });
-    //////////////
+    //
   } catch (err) {
     return next(err);
   }
 }); //fin UpdateMissionProgression
 
-// deleteMission [idMission]
+// deleteMission
+// Suppression d'une Mission
+// param [idMission]
 router.delete("/:idMission", (req, res, next) => {
-  //////////////
+  //
   try {
     // Verification des parametres
     if (!req.params.idMission) {
@@ -221,15 +232,12 @@ router.delete("/:idMission", (req, res, next) => {
       return;
     }
 
-    console.log(
-      "mission demande suppression pour idMission =>",
-      req.params.idMission
-    );
+    //console.log("mission demande suppression pour idMission =>",req.params.idMission);
 
-    // Delete de la Mission
+    // Suppression de la Mission
     Mission.findOne({ idMission: req.params.idMission }).then((data) => {
       if (data !== null) {
-        // si Mission existe pas alors on va la supprimer
+        // Si Mission existe pas alors on va la supprimer
         Mission.deleteOne({ idMission: req.params.idMission })
           .then((data) => {
             res.status(200).json({ result: true, return: "mission supprimée" });
@@ -243,7 +251,7 @@ router.delete("/:idMission", (req, res, next) => {
         res.status(200).json({ result: false, error: "Mission non trouvée" });
       }
     });
-    //////////////
+    //
   } catch (err) {
     console.log(`Delete de ${req.params.idMission} en erreur:${err}`);
     return next(err);

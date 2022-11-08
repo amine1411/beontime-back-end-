@@ -5,11 +5,10 @@ const { checkBody } = require("../modules/checkBody");
 const uid2 = require("uid2");
 const bcrypt = require("bcrypt");
 
-// signup - TEST OK
+// signup
 // Creation d'un Collaborateur
+// params [username, password, nom, prenom, picture, isManager, isCollab, isWorking]
 router.post("/signup", (req, res, next) => {
-  console.log("signup/collab pour le req.body =>", req.body);
-
   try {
     // Verification des parametres du body
     if (
@@ -28,12 +27,16 @@ router.post("/signup", (req, res, next) => {
       return;
     }
 
-    // Creation du User
+    //console.log("signup/collab pour le req.body =>", req.body);
+
+    // Creation du Collaborateur
     User.findOne({ username: req.body.username }).then((data) => {
       if (data === null) {
-        // si User n'existe pas alors on va le créer
+        // si le Collaborateur n'existe pas alors on va le créer
 
-        // password: hash,
+        // sécurisation du password par hash via bcrypt,
+        // création d'un token via uid2()
+
         const hash = bcrypt.hashSync(req.body.password, 10);
 
         const newUser = new User({
@@ -48,11 +51,13 @@ router.post("/signup", (req, res, next) => {
           isWorking: req.body.isWorking,
         });
 
+        // sauvegarde dans la base
         newUser.save().then((newUser) => {
+          // on retourne le token au Collaborateur
           res.status(200).json({ result: true, token: newUser.token });
         });
       } else {
-        // User already exists in database
+        // Le Collaborateur existe deja on retourne existe deja
         res
           .status(200)
           .json({ result: false, error: "Collaborateur existe deja" });
@@ -65,6 +70,7 @@ router.post("/signup", (req, res, next) => {
 
 // signin - TEST OK
 // Connexion d'un Collaborateur
+// params [username, password]
 router.post("/signin", (req, res, next) => {
   try {
     // Vérification des parametres
@@ -73,12 +79,23 @@ router.post("/signin", (req, res, next) => {
       return;
     }
 
-    // Vérification du user et comparaison du pwd
+    // Vérification de l'existence du Collaborateur
+
     User.findOne({
       username: req.body.username,
     }).then((user) => {
+      // Si le collaborateur existe
+      // On compare le hash du password fourni et celui en base
       if (user && bcrypt.compareSync(req.body.password, user.password)) {
-        res.status(200).json({ result: true, token: user.token, picture: user.picture, username: user.username, prenom: user.prenom, isManager: user.isManager });
+        // on retourne les informations concernant le collaborateur
+        res.status(200).json({
+          result: true,
+          token: user.token,
+          picture: user.picture,
+          username: user.username,
+          prenom: user.prenom,
+          isManager: user.isManager,
+        });
       } else {
         res.status(200).json({
           result: false,
@@ -91,14 +108,18 @@ router.post("/signin", (req, res, next) => {
   }
 }); // fin signin
 
-// getAllUsers - TEST OK
+// getAllUsers
+// liste de tous les Collaborateurs
+// param - aucun
 router.get("/all", (req, res, next) => {
   try {
-    // Lecture des users
+    // Lecture des collaborateurs
+    // Exclusion du token et du password de la sélection des champs de la requete
     User.find()
       .select({ _id: 0, __v: 0, token: 0, password: 0 })
       .then((data) => {
         if (data.length !== 0) {
+          // il y a un ou des collaborateurs on retourne les informations non sensibles des collaborateurs
           res.status(200).json({ result: true, users: data });
         } else {
           // il n'y a pas de clients
@@ -110,7 +131,9 @@ router.get("/all", (req, res, next) => {
   }
 }); // fin getAllusers
 
-// updateUser [idCollab] - TEST OK
+// updateUser
+// Mettre à jour un Collaborateur
+// param [idCollab]
 router.put("/:idCollab", (req, res, next) => {
   try {
     // Verification des parametres
@@ -119,15 +142,12 @@ router.put("/:idCollab", (req, res, next) => {
       return;
     }
 
-    console.log(
-      "collab demande modification pour idCollab =>",
-      req.params.idCollab
-    );
+    //console.log("collab demande modification pour idCollab =>",req.params.idCollab);
 
     // MAJ du Collaborateur
     User.findOne({ username: req.params.idCollab }).then((data) => {
       if (data !== null) {
-        // si Mission existe alors on va la mettre a jour
+        // si Collaborateur existe alors on va la mettre a jour
         User.updateOne(
           { username: req.params.idCollab },
           {
@@ -155,9 +175,11 @@ router.put("/:idCollab", (req, res, next) => {
   }
 }); //fin updateUser
 
-// deleteUser [idCollab] - TEST OK
+// deleteUser
+// Suppression d'un Collaborateur
+// param [idCollab]
 router.delete("/:idCollab", (req, res, next) => {
-  //////////////
+  //
   try {
     // Verification des parametres
     if (!req.params.idCollab) {
@@ -165,15 +187,12 @@ router.delete("/:idCollab", (req, res, next) => {
       return;
     }
 
-    console.log(
-      "collaborateur demande suppression pour username =>",
-      req.params.idCollab
-    );
+    //console.log("collaborateur demande suppression pour username =>",req.params.idCollab);
 
-    // Delete du Collab
+    // Suppression du Collaborateur
     User.findOne({ username: req.params.idCollab }).then((data) => {
       if (data !== null) {
-        // si User existe pas alors on va la supprimer
+        // si Collaborateur existe pas alors on va la supprimer
         User.deleteOne({ username: req.params.idCollab })
           .then((data) => {
             res
@@ -185,7 +204,7 @@ router.delete("/:idCollab", (req, res, next) => {
             res.status(200).json({ result: false, return: error });
           });
       } else {
-        // User n'existe pas
+        // Collaborateur n'existe pas
         res
           .status(200)
           .json({ result: false, error: "collaborateur non trouvé" });

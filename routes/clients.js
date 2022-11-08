@@ -1,10 +1,18 @@
+//---------------------------------------------------
+// ROUTEUR CLIENTS
+//---------------------------------------------------
 var express = require("express");
 var router = express.Router();
+
+// Import du Modèle Mongoose des Clients
 const Client = require("../models/clients");
+
+// Utilisation du module checkbody pour vérifier la présence des paramètres dans req.body
 const { checkBody } = require("../modules/checkBody");
 
 // getAllClients
 // retourne tous les clients
+// param : aucun
 router.get("/all", (req, res, next) => {
   try {
     // Lecture des clients
@@ -12,9 +20,10 @@ router.get("/all", (req, res, next) => {
       .select({ _id: 0, __v: 0 })
       .then((data) => {
         if (data.length !== 0) {
+          // il y a un ou des Clients on retourne les data
           res.status(200).json({ result: true, clients: data });
         } else {
-          // il n'y a pas de clients
+          // il n'y a pas de Client
           res
             .status(200)
             .json({ result: false, error: "Aucun Client dans la base" });
@@ -25,8 +34,9 @@ router.get("/all", (req, res, next) => {
   }
 }); // fin getAllClients
 
-// getClient_by_idClient - TEST OK
+// getClient_by_idClient
 // retourne un client
+// param [idClient]
 router.get("/:idClient", (req, res, next) => {
   try {
     // Verification des parametres
@@ -54,11 +64,11 @@ router.get("/:idClient", (req, res, next) => {
   }
 }); /// fin getClient_by_idClient
 
-// addClient - TEST OK
+// addClient
 // ajouter un client
 // params [idClient, entreprise]
 router.post("/", (req, res, next) => {
-  //////////////
+  //
   try {
     // Verification des parametres
     if (!checkBody(req.body, ["idClient", "entreprise"])) {
@@ -66,7 +76,8 @@ router.post("/", (req, res, next) => {
       return;
     }
 
-    console.log("Demande Creation d'un Client =>", req.body);
+    // console.log("Demande Creation d'un Client =>", req.body);
+
     // Creation du Client
     // on verifie si le client existe deja
     Client.findOne({ idClient: req.body.idClient }).then((data) => {
@@ -78,7 +89,9 @@ router.post("/", (req, res, next) => {
           isActive: true,
         });
 
+        // on enregistre le Client dans la base
         newClient.save().then((newClient) => {
+          // on retourne le client créé
           res.status(200).json({ result: true, client: newClient });
         });
       } else {
@@ -86,13 +99,15 @@ router.post("/", (req, res, next) => {
         res.status(200).json({ result: false, error: "Client existe deja" });
       }
     });
-    //////////////
+    //
   } catch (err) {
     return next(err);
   }
 }); //////fin AddClient
 
-// updateClient [idClient] - TEST OK
+// updateClient
+// mettre à jour un Client
+// param [idClient]
 router.put("/:idClient", (req, res, next) => {
   //////////////
   try {
@@ -102,10 +117,7 @@ router.put("/:idClient", (req, res, next) => {
       return;
     }
 
-    console.log(
-      "Client demande modification pour idClient =>",
-      req.params.idClient
-    );
+    // console.log("Client demande modification pour idClient =>",req.params.idClient);
 
     // MAJ du Client
     Client.findOne({ idClient: req.params.idClient }).then((data) => {
@@ -135,9 +147,11 @@ router.put("/:idClient", (req, res, next) => {
   }
 }); //fin UpdateClient
 
-// deleteClient params [idClient] - TEST OK
+// deleteClient
+// suppression d'un Client
+// params [idClient]
 router.delete("/:idClient", (req, res, next) => {
-  //////////////
+  //
   try {
     // Verification des parametres
     if (!req.params.idClient) {
@@ -145,12 +159,9 @@ router.delete("/:idClient", (req, res, next) => {
       return;
     }
 
-    console.log(
-      "client demande suppression pour idClient =>",
-      req.params.idClient
-    );
+    // console.log("client demande suppression pour idClient =>",req.params.idClient);
 
-    // Delete du Client
+    // Suppression du Client
     Client.findOne({ idClient: req.params.idClient }).then((data) => {
       if (data !== null) {
         // si Client existe pas alors on va le supprimer

@@ -3,8 +3,13 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+// Gestion des variables d'environnement
 require("dotenv").config();
+
+// Connexion Mongo
 require("./models/connection");
+
+// Declaration des Routeurs
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var clientsRouter = require("./routes/clients");
